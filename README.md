@@ -130,3 +130,72 @@ This project sets up an OpenVPN client with traffic control capabilities using D
 ## Note
 
 The `start.sh` script must be run each time you want to start the services, as it sets up the necessary routing and NAT rules. Simply running `docker-compose up -d` is not sufficient.
+
+## Running as a System Service
+
+To automatically start the services at system boot, you can create a systemd service:
+
+1. Create a systemd service file:
+   ```bash
+   sudo nano /etc/systemd/system/openvpn-tc.service
+   ```
+
+2. Add the following content (adjust paths as needed):
+   ```ini
+   [Unit]
+   Description=OpenVPN with Traffic Control
+   After=network.target docker.service
+   Requires=docker.service
+
+   [Service]
+   Type=oneshot
+   RemainAfterExit=yes
+   WorkingDirectory=/opt/openvpn-tc
+   ExecStart=/opt/openvpn-tc/start.sh
+   ExecStop=/usr/bin/docker compose down
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. Set proper permissions:
+   ```bash
+   sudo chmod 644 /etc/systemd/system/openvpn-tc.service
+   ```
+
+4. Copy your project to the system directory:
+   ```bash
+   sudo mkdir -p /opt/openvpn-tc
+   sudo cp -r * /opt/openvpn-tc/
+   sudo chown -R root:root /opt/openvpn-tc
+   sudo chmod +x /opt/openvpn-tc/start.sh
+   ```
+
+5. Enable and start the service:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable openvpn-tc
+   sudo systemctl start openvpn-tc
+   ```
+
+6. Check the service status:
+   ```bash
+   sudo systemctl status openvpn-tc
+   ```
+
+Useful commands:
+- Stop the service: `sudo systemctl stop openvpn-tc`
+- Restart the service: `sudo systemctl restart openvpn-tc`
+- View logs: `sudo journalctl -u openvpn-tc`
+
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Credits
+
+We used the code from the following repositories as a base for our project:
+
+- [dperson/openvpn-client](https://github.com/dperson/openvpn-client)
+- [tum-lkn/tcgui](https://github.com/tum-lkn/tcgui)
