@@ -36,6 +36,7 @@ services:
         ipv4_address: ${WAN_IP}
 
   tc-server:
+    container_name: tc_server_1
     build:
       context: ./tcgui
       dockerfile: docker/Dockerfile
