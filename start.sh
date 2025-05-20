@@ -20,7 +20,7 @@ fi
 # Wait a bit for the containers to initialize
 sleep 2
 
-# Step 2: Update routing table inside the OpenVPN client container
+# Step 3: Update routing table inside the OpenVPN client container
 # Remove any existing default route (if present)
 docker exec openvpn_client_1 sh -c "ip route del default || true"
 
