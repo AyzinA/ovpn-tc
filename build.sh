@@ -63,6 +63,8 @@ if docker logs "${CONTAINER_NAME}" 2>&1 | grep -q "ERROR: VPN CA cert missing!";
     echo "[i] Stopping and removing container..."
     docker stop "${CONTAINER_NAME}" || true
     docker rm "${CONTAINER_NAME}" || true
+    
+    rm -rf ${VPN_CONFIG_PATH}
 
     echo "[✓] You may now continue to the next script (start.sh) to complete the setup."
     echo "[→] Make sure the ethernet interfaces are connected to the correct WAN and LAN networks."
