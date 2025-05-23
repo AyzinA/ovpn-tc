@@ -125,15 +125,17 @@ To autostart the full setup at boot:
    ```ini
    [Unit]
    Description=OpenVPN with Traffic Control
-   After=network.target docker.service
+   After=network-online.target docker.service
+   Wants=network-online.target
    Requires=docker.service
 
    [Service]
-   Type=oneshot
-   RemainAfterExit=yes
+   Type=simple
    WorkingDirectory=/opt/openvpn-tc
    ExecStart=/opt/openvpn-tc/start.sh
-   ExecStop=/usr/bin/docker compose down
+   ExecStop=/usr/bin/docker compose -f /opt/openvpn-tc/docker-compose.yml down
+   Restart=on-failure
+   RestartSec=5s
 
    [Install]
    WantedBy=multi-user.target
