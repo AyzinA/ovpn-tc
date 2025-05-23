@@ -129,7 +129,7 @@ WantedBy=multi-user.target
 EOF
 
     chmod 644 /etc/systemd/system/openvpn-tc.service
-    chmod 644 service.sh
+    chmod 755 service.sh
 
     echo "[+] Reloading systemd daemon..."
     systemctl daemon-reexec
