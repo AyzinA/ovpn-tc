@@ -76,6 +76,7 @@ This script will:
 * Set container routing and NAT (via tun0)
 * Save iptables rules
 * Start dnsmasq inside the container
+* Automatically creates and enables a systemd service called `openvpn-tc.service` (once)
 
 ---
 
@@ -111,50 +112,45 @@ You may optionally override DNS1/DNS2 with Google, Cloudflare, OpenDNS, or Quad9
 
 ---
 
-## Systemd Service Setup
+## Systemd Service (Automated via Script)
 
-To autostart the full setup at boot:
+This project includes an automated setup for a systemd service that will run OpenVPN with Traffic Control at system startup.
 
-1. Create a service file:
+### Service File Details
 
-   ```bash
-   sudo nano /etc/systemd/system/openvpn-tc.service
-   ```
-2. Add:
+The following systemd unit is created at `/etc/systemd/system/openvpn-tc.service`:
 
-   ```ini
-   [Unit]
-   Description=OpenVPN with Traffic Control
-   After=network-online.target docker.service
-   Wants=network-online.target
-   Requires=docker.service
+```ini
+[Unit]
+Description=OpenVPN with Traffic Control
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
 
-   [Service]
-   Type=simple
-   WorkingDirectory=/opt/openvpn-tc
-   ExecStart=/opt/openvpn-tc/service.sh
-   Restart=on-failure
-   RestartSec=5s
+[Service]
+Type=simple
+WorkingDirectory=/opt/openvpn-tc
+ExecStart=/opt/openvpn-tc/service.sh
+ExecStop=/usr/bin/docker compose -f /opt/openvpn-tc/docker-compose.yml down
+Restart=on-failure
+RestartSec=5s
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
-3. Install:
+[Install]
+WantedBy=multi-user.target
+```
 
-   ```bash
-   sudo mkdir -p /opt/openvpn-tc
-   sudo cp -r * /opt/openvpn-tc/
-   sudo chown -R root:root /opt/openvpn-tc
-   sudo chmod +x /opt/openvpn-tc/service.sh
-   ```
-4. Enable and start:
+> Note: `WorkingDirectory` and `ExecStart` are automatically adjusted to the current working directory when `start.sh` is executed.
 
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable openvpn-tc
-   sudo systemctl start openvpn-tc
-   sudo systemctl status openvpn-tc
-   ```
+> Note: `WorkingDirectory` and `ExecStart` paths are dynamically generated based on your working directory when `start.sh` is executed.
+
+### Commands to Use
+
+- Start: `sudo systemctl start openvpn-tc`
+- Stop: `sudo systemctl stop openvpn-tc`
+- Restart: `sudo systemctl restart openvpn-tc`
+- Status: `sudo systemctl status openvpn-tc`
+
+This service ensures that the OpenVPN client container and routing/NAT logic are automatically restored at system boot.
 
 ---
 

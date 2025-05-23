@@ -5,7 +5,7 @@ set -a
 source .env
 set +a
 
-MARKER_FILE="/etc/.docker_setup_done"
+MARKER_FILE="/etc/.openvpn_tc_docker_setup_done"
 
 if [ ! -f "$MARKER_FILE" ]; then
     echo "[+] First-time setup: Installing required packages and Docker..."

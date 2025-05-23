@@ -6,7 +6,7 @@ source .env
 set +a
 
 # --- One-time Network Setup ---
-if [ ! -f /etc/.network_setup_done ]; then
+if [ ! -f /etc/.openvpn_tc_network_setup_done ]; then
     echo "[+] Running one-time network and dnsmasq setup..."
 
     echo "[+] Configuring network interfaces..."
@@ -44,7 +44,7 @@ EOF
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
     # Marker file to avoid re-running this section
-    touch /etc/.network_setup_done
+    touch /etc/.openvpn_tc_network_setup_done
     echo "[✓] Initial network setup complete."
 else
     echo "[i] Network already set up. Skipping..."
@@ -104,3 +104,47 @@ echo "[+] Starting dnsmasq inside the container..."
 docker exec ${CONTAINER_NAME} sh -c "dnsmasq"
 
 echo "[✓] Setup complete. iptables rules saved in ./iptables/"
+
+# --- Create systemd service ---
+if [ ! -f /etc/.openvpn_tc_service_created ]; then
+    echo "[+] Creating systemd service..."
+
+    cat > /etc/systemd/system/openvpn-tc.service <<EOF
+[Unit]
+Description=OpenVPN with Traffic Control
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=$(pwd)
+ExecStart=$(pwd)/service.sh
+ExecStop=/usr/bin/docker compose -f $(pwd)/docker-compose.yml down
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    chmod 644 /etc/systemd/system/openvpn-tc.service
+
+    echo "[+] Reloading systemd daemon..."
+    systemctl daemon-reexec
+    systemctl daemon-reload
+
+    echo "[+] Enabling openvpn-tc.service..."
+    systemctl enable openvpn-tc.service
+
+    # Marker to prevent re-creation
+    touch /etc/.openvpn_tc_service_created
+
+    echo "[✓] Systemd service created and enabled. You can now use:"
+    echo "    systemctl start openvpn-tc"
+    echo "    systemctl stop openvpn-tc"
+    echo "    systemctl restart openvpn-tc"
+    echo "    systemctl status openvpn-tc"
+else
+    echo "[i] Systemd service already created. Skipping..."
+fi
