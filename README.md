@@ -132,8 +132,7 @@ To autostart the full setup at boot:
    [Service]
    Type=simple
    WorkingDirectory=/opt/openvpn-tc
-   ExecStart=/opt/openvpn-tc/start.sh
-   ExecStop=/usr/bin/docker compose -f /opt/openvpn-tc/docker-compose.yml down
+   ExecStart=/opt/openvpn-tc/service.sh
    Restart=on-failure
    RestartSec=5s
 
@@ -146,7 +145,7 @@ To autostart the full setup at boot:
    sudo mkdir -p /opt/openvpn-tc
    sudo cp -r * /opt/openvpn-tc/
    sudo chown -R root:root /opt/openvpn-tc
-   sudo chmod +x /opt/openvpn-tc/start.sh
+   sudo chmod +x /opt/openvpn-tc/service.sh
    ```
 4. Enable and start:
 
