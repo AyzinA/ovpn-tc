@@ -17,7 +17,7 @@ This project sets up an OpenVPN client with traffic control capabilities using D
 ├── .env                      # Environment variables
 ├── build.sh                  # Initial setup & VPN config validation script
 ├── start.sh                  # Final startup & routing configuration
-├── iptables/                 # Directory for iptables rules backup
+├── iptables/                 # Directory for iptables rules to be saved
 ├── openvpn/                  # OpenVPN client service
 │   ├── docker/
 │   │   └── Dockerfile         # OpenVPN container build configuration
