@@ -6,12 +6,13 @@ source .env
 set +a
 
 echo "[+] Starting Docker container as a systemd service..."
+docker compose -f docker-compose.yml down
 
 # Start container(s) in detached mode
 if [ "$ENABLE_TC" = "true" ]; then
-    docker compose -f /opt/openvpn-tc/docker-compose.yml up -d
+    docker compose -f docker-compose.yml up -d
 else
-    docker compose -f /opt/openvpn-tc/docker-compose.yml up -d openvpn_client
+    docker compose -f docker-compose.yml up -d openvpn_client
 fi
 
 sleep 2
@@ -47,8 +48,8 @@ docker exec "${CONTAINER_NAME}" sh -c "iptables -t nat -A POSTROUTING -o tun0 -j
 
 # Save iptables rules
 echo "[+] Saving iptables rules to host..."
-mkdir -p /opt/openvpn-tc/iptables
-docker exec "${CONTAINER_NAME}" iptables-save > /opt/openvpn-tc/iptables/${CONTAINER_NAME}_rules.v4
+mkdir -p iptables
+docker exec "${CONTAINER_NAME}" iptables-save > iptables/${CONTAINER_NAME}_rules.v4
 
 # Start dnsmasq inside container
 echo "[+] Starting dnsmasq inside the container..."
@@ -58,7 +59,7 @@ echo "[✓] Setup complete. iptables rules saved."
 
 # Keep foreground process for systemd to track
 if [ "$ENABLE_TC" = "true" ]; then
-    exec docker compose -f /opt/openvpn-tc/docker-compose.yml logs -f
+    exec docker compose -f docker-compose.yml logs -f
 else
-    exec docker compose -f /opt/openvpn-tc/docker-compose.yml logs -f openvpn_client
+    exec docker compose -f docker-compose.yml logs -f openvpn_client
 fi
