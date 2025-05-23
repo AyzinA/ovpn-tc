@@ -1,6 +1,6 @@
 services:
   openvpn_client:
-    container_name: openvpn_client_1
+    container_name: ${CONTAINER_NAME}
     build:
       context: ./openvpn
       dockerfile: docker/Dockerfile
@@ -28,7 +28,8 @@ services:
       - /run
       - /tmp
     dns:
-      - 10.8.0.1
+      - ${DNS1}
+      - ${DNS2}
     networks:
       lan_vpn_net:
         ipv4_address: ${LAN_IP}
@@ -36,14 +37,14 @@ services:
         ipv4_address: ${WAN_IP}
 
   tc-server:
-    container_name: tc_server_1
+    container_name: tc_server
     build:
       context: ./tcgui
       dockerfile: docker/Dockerfile
     restart: always
     environment:
-      TCGUI_IP: ${TCGUI_IP}
-      TCGUI_PORT: ${TCGUI_PORT}
+      TCGUI_IP: 0.0.0.0
+      TCGUI_PORT: 5000
     cap_add:
       - NET_ADMIN
     network_mode: "host"
