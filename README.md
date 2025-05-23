@@ -141,8 +141,6 @@ WantedBy=multi-user.target
 
 > Note: `WorkingDirectory` and `ExecStart` are automatically adjusted to the current working directory when `start.sh` is executed.
 
-> Note: `WorkingDirectory` and `ExecStart` paths are dynamically generated based on your working directory when `start.sh` is executed.
-
 ### Commands to Use
 
 - Start: `sudo systemctl start openvpn-tc`
