@@ -17,6 +17,7 @@ This project sets up an OpenVPN client with traffic control capabilities using D
 ├── .env                      # Environment variables
 ├── build.sh                  # Initial setup & VPN config validation script
 ├── start.sh                  # Final startup & routing configuration
+├── service.sh                # Systemd service script that will run at system startup
 ├── iptables/                 # Directory for iptables rules to be saved
 ├── openvpn/                  # OpenVPN client service
 │   ├── docker/
@@ -114,7 +115,7 @@ You may optionally override DNS1/DNS2 with Google, Cloudflare, OpenDNS, or Quad9
 
 ## Systemd Service (Automated via Script)
 
-This project includes an automated setup for a systemd service that will run OpenVPN with Traffic Control at system startup.
+This project includes an automated setup for a systemd service that will run OpenVPN with Traffic Control if enabled at system startup.
 
 ### Service File Details
 

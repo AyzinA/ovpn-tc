@@ -14,6 +14,7 @@ if [ ! -f "$MARKER_FILE" ]; then
     apt install -y \
         dnsmasq \
         tcpdump \
+        htop \
         vim \
         ncdu \
         curl \
@@ -64,7 +65,9 @@ if docker logs "${CONTAINER_NAME}" 2>&1 | grep -q "ERROR: VPN CA cert missing!";
     docker stop "${CONTAINER_NAME}" || true
     docker rm "${CONTAINER_NAME}" || true
     
-    rm -rf ${VPN_CONFIG_PATH}
+    if [ -d "$VPN_CONFIG_PATH" ]; then
+        rm -rf "$VPN_CONFIG_PATH"
+    fi
 
     echo "[✓] You may now continue to the next script (start.sh) to complete the setup."
     echo "[→] Make sure the ethernet interfaces are connected to the correct WAN and LAN networks."
@@ -79,6 +82,10 @@ else
     echo "[i] Stopping and removing container..."
     docker stop "${CONTAINER_NAME}" || true
     docker rm "${CONTAINER_NAME}" || true
+
+    if [ -d "$VPN_CONFIG_PATH" ]; then
+        rm -rf "$VPN_CONFIG_PATH"
+    fi
 
     echo "[✗] Exiting because VPN config was unexpectedly found."
     exit 1

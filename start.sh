@@ -72,6 +72,11 @@ if docker logs "${CONTAINER_NAME}" 2>&1 | grep -q "ERROR: VPN CA cert missing!";
     docker stop "${CONTAINER_NAME}"
     docker rm "${CONTAINER_NAME}"
     echo "[✗] Cannot continue without a valid VPN configuration file."
+
+    if [ -d "$VPN_CONFIG_PATH" ]; then
+        rm -rf "$VPN_CONFIG_PATH"
+    fi
+
     exit 1
 fi
 
@@ -136,7 +141,10 @@ EOF
     systemctl daemon-reload
 
     echo "[+] Enabling openvpn-tc.service..."
-    systemctl enable openvpn-tc.service
+    systemctl enable --now openvpn-tc.service
+
+    # Wait for initialization
+    sleep 2
 
     # Marker to prevent re-creation
     touch /etc/.openvpn_tc_service_created
