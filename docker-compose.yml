@@ -54,17 +54,14 @@ networks:
     driver: macvlan
     driver_opts:
       parent: ${LAN_INTERFACE}
-    # driver: bridge # Uncomment if you are testing on a Laptop
     ipam:
       config:
         - subnet: ${LAN_SUBNET}
-          # gateway: ${LAN_GATEWAY}
 
   wan_vpn_net:
     driver: macvlan
     driver_opts:
       parent: ${WAN_INTERFACE}
-    # driver: bridge # Uncomment if you are testing on a Laptop
     ipam:
       config:
         - subnet: ${WAN_SUBNET}
