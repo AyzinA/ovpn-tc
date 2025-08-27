@@ -148,6 +148,7 @@ WantedBy=multi-user.target
 - Stop: `sudo systemctl stop openvpn-tc`
 - Restart: `sudo systemctl restart openvpn-tc`
 - Status: `sudo systemctl status openvpn-tc`
+- Remove TC rules: `tc qdisc del dev {interface} root netem`
 
 This service ensures that the OpenVPN client container and routing/NAT logic are automatically restored at system boot.
 

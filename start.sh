@@ -33,7 +33,7 @@ EOF
     cat > /etc/dnsmasq.conf <<EOF
 dhcp-range=$LAN_RANGE,255.255.255.0,12h
 dhcp-option=option:router,$LAN_IP
-dhcp-option=option:dns-server,8.8.8.8
+dhcp-option=option:dns-server,10.8.0.1
 dhcp-authoritative
 EOF
 
@@ -41,7 +41,7 @@ EOF
     systemctl restart dnsmasq
 
     echo "[+] Setting resolver..."
-    echo "nameserver 8.8.8.8" > /etc/resolv.conf
+    echo "nameserver 10.8.0.1" > /etc/resolv.conf
 
     # Marker file to avoid re-running this section
     touch /etc/.openvpn_tc_network_setup_done
